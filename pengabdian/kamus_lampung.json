@@ -99,6 +99,10 @@
     { "id": 97, "indonesia": "cinta", "lampung": "sayang" },
     { "id": 98, "indonesia": "senang", "lampung": "gembira" },
     { "id": 99, "indonesia": "sedih", "lampung": "sedih" },
-    { "id": 100, "indonesia": "terima kasih", "lampung": "makasih" }
+    { "id": 100, "indonesia": "terima kasih", "lampung": "makasih" },
+    { "id": 100, "indonesia": "Perempuan", "lampung": "Muli" },
+    { "id": 100, "indonesia": "Makan", "lampung": "Mengan" },
+    { "id": 100, "indonesia": "Duduk", "lampung": "Mejong" }
+    
   ]
 }
