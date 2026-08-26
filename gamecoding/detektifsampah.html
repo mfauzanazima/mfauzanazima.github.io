@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DETEKTIF SAMPAH - Game Berpikir Komputasional 🎮</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-terang: #eef2f5;
+      --card-terang: #ffffff;
+      --teks-utama: #2d3748;
+      --primary-biru: #3b82f6;
+      --accent-kuning: #f59e0b;
+      --organik: #10b981;
+      --anorganik: #06b6d4;
+      --b3: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--bg-terang);
+      background-image: 
+        radial-gradient(circle at 50% 50%, #ffffff 0%, var(--bg-terang) 100%),
+        linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+      background-size: 100% 100%, 25px 25px, 25px 25px;
+      color: var(--teks-utama);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Judul Game */
+    .arcade-title {
+      font-family: 'Press Start 2P', cursive;
+      color: var(--primary-biru);
+      text-shadow: 3px 3px 0px var(--accent-kuning), 6px 6px 0px #cbd5e1;
+      font-size: 1.6rem;
+      text-align: center;
+      margin: 10px 0 5px 0;
+      letter-spacing: 1px;
+    }
+
+    .subtitle-arcade {
+      color: #64748b;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    /* Konsol Utama Game */
+    .game-console {
+      background-color: var(--card-terang);
+      border: 4px solid #cbd5e1;
+      border-radius: 28px;
+      padding: 25px;
+      box-shadow: 
+        0 20px 30px rgba(148, 163, 184, 0.25),
+        0 8px 0px #cbd5e1;
+      max-width: 750px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Papan Status Skor / HUD */
+    .hud-display {
+      background: #f8fafc;
+      border: 3px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.8rem;
+      color: #334155;
+    }
+
+    .hud-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hud-value {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    /* Area Tempat Sampah */
+    .bins-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .bin-card {
+      background: #f8fafc;
+      border-radius: 20px;
+      border: 4px solid #cbd5e1;
+      padding: 15px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 190px;
+      transition: all 0.2s ease;
+      position: relative;
+      box-shadow: 0 6px 0px #e2e8f0;
+    }
+
+    .bin-card.bin-organik { border-color: var(--organik); background: #ecfdf5; }
+    .bin-card.bin-anorganik { border-color: var(--anorganik); background: #ecfeff; }
+    .bin-card.bin-b3 { border-color: var(--b3); background: #fef2f2; }
+
+    .bin-card.drag-over {
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 12px 20px rgba(59, 130, 246, 0.25);
+    }
+
+    .bin-tag {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.6rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 0px rgba(0,0,0,0.15);
+    }
+
+    .tag-organik { background: var(--organik); }
+    .tag-anorganik { background: var(--anorganik); }
+    .tag-b3 { background: var(--b3); }
+
+    .bin-icon {
+      font-size: 2.8rem;
+      margin-bottom: 5px;
+    }
+
+    .bin-contents {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    /* Area Sampah (Inventaris) */
+    .inventory-box {
+      background: #f1f5f9;
+      border: 3px dashed #cbd5e1;
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .inventory-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #475569;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .trash-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+      min-height: 70px;
+    }
+
+    .trash-card {
+      background: #ffffff;
+      border: 3px solid #cbd5e1;
+      color: var(--teks-utama);
+      padding: 10px 16px;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: grab;
+      box-shadow: 0 5px 0px #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .trash-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary-biru);
+      box-shadow: 0 8px 0px #cbd5e1;
+    }
+
+    .trash-card:active {
+      cursor: grabbing;
+      transform: translateY(2px);
+      box-shadow: 0 2px 0px #cbd5e1;
+    }
+
+    .trash-card.dragging {
+      opacity: 0.3;
+      transform: scale(0.9);
+    }
+
+    /* Tombol Aksi */
+    .arcade-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn-arcade {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.75rem;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.1s;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-restart {
+      background: var(--primary-biru);
+      box-shadow: 0 6px 0px #1d4ed8;
+    }
+
+    .btn-restart:hover { background: #2563eb; }
+    .btn-restart:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0px #1d4ed8;
+    }
+
+    /* Pesan Hasil Feedback */
+    #arcadeFeedback {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.5;
+      text-align: center;
+      display: none;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .feedback-success {
+      background: #dcfce7;
+      border: 3px solid var(--organik);
+      color: #065f46;
+    }
+
+    .feedback-error {
+      background: #fee2e2;
+      border: 3px solid var(--b3);
+      color: #991b1b;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .slotted-item {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--teks-utama);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="arcade-title">DETEKTIF SAMPAH</div>
+  <div class="subtitle-arcade">🔍 Misi Memilah Sampah Berdasarkan Pola Bahan</div>
+
+  <div class="game-console">
+    
+    <!-- Papan Status (HUD) -->
+    <div class="hud-display">
+      <div class="hud-item">
+        <span>SKOR:</span>
+        <span id="score" class="hud-value" style="color: var(--primary-biru);">0000</span>
+      </div>
+      <div class="hud-item">
+        <span>TARGET:</span>
+        <span id="target" class="hud-value" style="color: var(--organik);">0/6</span>
+      </div>
+    </div>
+
+    <!-- Kotak Tempat Sampah -->
+    <div class="bins-grid">
+      <!-- Organik -->
+      <div class="bin-card bin-organik" data-type="organik" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <span class="bin-tag tag-organik">ORGANIK</span>
+        <div class="bin-icon">🍃</div>
+        <div class="bin-contents" id="slot-organik"></div>
+      </div>
+
+      <!-- Anorganik -->
+      <div class="bin-card bin-anorganik" data-type="anorganik" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <span class="bin-tag tag-anorganik">ANORGANIK</span>
+        <div class="bin-icon">🥤</div>
+        <div class="bin-contents" id="slot-anorganik"></div>
+      </div>
+
+      <!-- B3 -->
+      <div class="bin-card bin-b3" data-type="b3" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <span class="bin-tag tag-b3">B3 BERBAHAYA</span>
+        <div class="bin-icon">🔋</div>
+        <div class="bin-contents" id="slot-b3"></div>
+      </div>
+    </div>
+
+    <!-- Area Barang Sampah -->
+    <div class="inventory-box">
+      <div class="inventory-title">Tarik & Geser Sampah ke Tempat yang Cocok:</div>
+      <div id="trashPool" class="trash-pool"></div>
+    </div>
+
+    <!-- Tombol Ulang -->
+    <div class="arcade-actions">
+      <button class="btn-arcade btn-restart" onclick="initGame()">🔄 MAIN LAGI</button>
+    </div>
+
+    <!-- Pesan / Umpan Balik -->
+    <div id="arcadeFeedback"></div>
+
+  </div>
+
+  <script>
+    const trashDatabase = [
+      { id: 1, name: "🍌 Kulit Pisang", type: "organik" },
+      { id: 2, name: "🥤 Botol Plastik", type: "anorganik" },
+      { id: 3, name: "🔋 Baterai Bekas", type: "b3" },
+      { id: 4, name: "🍎 Sisa Apel", type: "organik" },
+      { id: 5, name: "📦 Kardus Bekas", type: "anorganik" },
+      { id: 6, name: "💡 Lampu Rusak", type: "b3" }
+    ];
+
+    let draggedItem = null;
+    let score = 0;
+    let sortedCount = 0;
+
+    function initGame() {
+      const trashPool = document.getElementById("trashPool");
+      trashPool.innerHTML = "";
+      
+      document.getElementById("slot-organik").innerHTML = "";
+      document.getElementById("slot-anorganik").innerHTML = "";
+      document.getElementById("slot-b3").innerHTML = "";
+      document.getElementById("arcadeFeedback").style.display = "none";
+
+      score = 0;
+      sortedCount = 0;
+      updateHUD();
+
+      // Acak urutan sampah
+      const shuffled = [...trashDatabase].sort(() => Math.random() - 0.5);
+
+      shuffled.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "trash-card";
+        div.draggable = true;
+        div.innerText = item.name;
+        div.dataset.type = item.type;
+
+        div.addEventListener("dragstart", (e) => {
+          draggedItem = div;
+          div.classList.add("dragging");
+        });
+
+        div.addEventListener("dragend", () => {
+          div.classList.remove("dragging");
+          draggedItem = null;
+        });
+
+        trashPool.appendChild(div);
+      });
+    }
+
+    function updateHUD() {
+      document.getElementById("score").innerText = String(score).padStart(4, '0');
+      document.getElementById("target").innerText = `${sortedCount}/${trashDatabase.length}`;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add("drag-over");
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove("drag-over");
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const bin = e.currentTarget;
+      bin.classList.remove("drag-over");
+
+      if (!draggedItem) return;
+
+      const itemType = draggedItem.dataset.type;
+      const binType = bin.dataset.type;
+
+      if (itemType === binType) {
+        // Jawaban Benar!
+        const slot = document.getElementById(`slot-${binType}`);
+        const slotted = document.createElement("div");
+        slotted.className = "slotted-item";
+        slotted.innerText = draggedItem.innerText;
+        slot.appendChild(slotted);
+
+        draggedItem.remove();
+        
+        score += 100;
+        sortedCount++;
+        updateHUD();
+        
+        triggerFeedback("✅ HEBAT! Sampah berhasil dipilah sesuai jenisnya! (+100 Poin)", "success");
+      } else {
+        // Jawaban Salah!
+        score = Math.max(0, score - 20);
+        updateHUD();
+        triggerFeedback("❌ OPS! Tempat sampah tidak cocok dengan bahan sampah ini. Coba lagi! (-20 Poin)", "error");
+      }
+
+      if (sortedCount === trashDatabase.length) {
+        triggerFeedback("🎉 LUAR BIASA! Kamu berhasil memilah semua sampah dengan berpikir logis! 🏆", "success");
+      }
+    }
+
+    function triggerFeedback(text, status) {
+      const feedback = document.getElementById("arcadeFeedback");
+      feedback.style.display = "block";
+      feedback.className = status === "success" ? "feedback-success" : "feedback-error";
+      feedback.innerText = text;
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
