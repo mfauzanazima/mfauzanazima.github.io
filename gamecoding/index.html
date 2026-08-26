@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dunia Game Koding Seru! 🚀 | Belajar Berpikir Komputasional Anak SD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #4ecdc4;
+      --yellow: #ffe66d;
+      --dark: #2f3542;
+      --bg-light: #f7fbff;
+      --card-bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Nunito', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Background Decoration */
+    .bg-shape-1 {
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 350px;
+      height: 350px;
+      background-color: rgba(78, 205, 196, 0.2);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .bg-shape-2 {
+      position: absolute;
+      top: 400px;
+      left: -80px;
+      width: 250px;
+      height: 250px;
+      background-color: rgba(255, 230, 109, 0.3);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    /* Header / Hero Section */
+    header {
+      text-align: center;
+      padding: 50px 20px 30px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background-color: var(--yellow);
+      color: var(--dark);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 0 #ebd047;
+      transform: rotate(-2deg);
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      text-shadow: 3px 3px 0px #ffe66d;
+    }
+
+    header p {
+      font-size: 1.25rem;
+      color: #57606f;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Section Grid Products */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 20px 60px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 40px;
+      color: #2ed573;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+    }
+
+    /* Product Cards */
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 24px;
+      padding: 30px;
+      border: 4px solid #f1f2f6;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-1 { border-color: #ffe66d; }
+    .card-2 { border-color: #4ecdc4; }
+
+    .card-icon {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      display: inline-block;
+      background-color: #f7fbff;
+      width: 80px;
+      height: 80px;
+      line-height: 80px;
+      text-align: center;
+      border-radius: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+    }
+
+    .card-1 h3 { color: #ff9f43; }
+    .card-2 h3 { color: #10ac84; }
+
+    .card p {
+      color: #57606f;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .features {
+      list-style: none;
+      margin-bottom: 25px;
+    }
+
+    .features li {
+      font-size: 0.95rem;
+      color: #2f3542;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .features li::before {
+      content: "⭐️";
+      font-size: 0.9rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      text-align: center;
+      padding: 14px 20px;
+      border-radius: 16px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #ffffff;
+      transition: all 0.2s ease;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-card-1 {
+      background-color: #ff9f43;
+      box-shadow: 0 5px 0 #ee5253;
+    }
+    .btn-card-1:hover {
+      background-color: #ee5253;
+    }
+
+    .btn-card-2 {
+      background-color: #10ac84;
+      box-shadow: 0 5px 0 #01a3a4;
+    }
+    .btn-card-2:hover {
+      background-color: #01a3a4;
+    }
+
+    /* Information Section for Teachers/Parents */
+    .info-section {
+      background-color: #ffffff;
+      border-radius: 24px;
+      padding: 35px;
+      margin-top: 40px;
+      border: 3px dashed #74b9ff;
+      text-align: center;
+    }
+
+    .info-section h3 {
+      color: #0984e3;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .info-section p {
+      color: #636e72;
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #a4b0be;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header h1 { font-size: 2rem; }
+      header p { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-shape-1"></div>
+  <div class="bg-shape-2"></div>
+
+  <!-- Header Section -->
+  <header>
+    <span class="badge">🎮 Game Edukasi Anak SD</span>
+    <h1>Petualangan Koding Cilik! 🧩</h1>
+    <p>Belajar berpikir kritis, logika pemograman, dan pemecahan masalah dengan cara yang seru dan menyenangkan!</p>
+  </header>
+
+  <!-- Products Section -->
+  <main class="container">
+    <h2 class="section-title">Pilih Game Yang Ingin Kamu Mainkan 🍳🗺️</h2>
+
+    <div class="product-grid">
+      
+      <!-- Card Game 1 -->
+      <div class="card card-1">
+        <div>
+          <div class="card-icon">🍳</div>
+          <h3>Game Algoritma Telur Dadar</h3>
+          <p>Bantu si Koki menyusun urutan langkah-langkah yang tepat untuk memasak telur dadar lezat!</p>
+          <ul class="features">
+            <li>Latihan berpikir runtut (Algoritma)</li>
+            <li>Fitur Drag & Drop interaktif</li>
+            <li>Peringatan otomatis jika ada kesalahan logika</li>
+          </ul>
+        </div>
+        <a href="https://mfauzanazima.github.io/gamecoding/gamealgoritma.html" target="_blank" class="btn btn-card-1">▶️ Mainkan Game Telur</a>
+      </div>
+
+      <!-- Card Game 2 -->
+      <div class="card card-2">
+        <div>
+          <div class="card-icon">🗺️</div>
+          <h3>Petualangan Koding</h3>
+          <p>Petualangan seru memandu karakter menjelajahi rintangan dengan menyusun perintah gerakan.</p>
+          <ul class="features">
+            <li>Latihan instruksi logika terstruktur</li>
+            <li>Pengenalan pola & tantangan seru</li>
+            <li>Tampilan penuh warna ramah anak</li>
+          </ul>
+        </div>
+        <a href="https://mfauzanazima.github.io/gamecoding/petualangancoding.html" target="_blank" class="btn btn-card-2">🚀 Mulai Petualangan</a>
+      </div>
+
+    </div>
+
+    <!-- Extra Info for Teachers / Parents -->
+    <div class="info-section">
+      <h3>💡 Apa itu Berpikir Komputasional (Computational Thinking)?</h3>
+      <p>Melalui game interaktif ini, murid-murid belajar memecahkan masalah besar menjadi langkah-langkah kecil (Dekomposisi), menemukan pola yang sama, serta menyusun perintah yang teratur tanpa harus menghafal kode pemograman yang rumit.</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>© M. Fauzan Azima — Media Pembelajaran Berpikir Komputasional Anak Sekolah Dasar</p>
+  </footer>
+
+</body>
+</html>
