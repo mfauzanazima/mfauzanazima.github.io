@@ -19,9 +19,10 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(
 .category{font-size:13px;font-weight:800;color:#6c63ff;text-transform:uppercase}
 .question{font-size:25px;font-weight:800;line-height:1.35;margin:14px auto 22px;max-width:700px}
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:auto}
-.answer{border:3px solid #e8eaf2;background:#fafbff;border-radius:18px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;transition:.2s}
+.answer{border:3px solid #e8eaf2;background:#fafbff;border-radius:18px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;transition:.2s;color:#000000}
 .answer:hover{transform:translateY(-2px);border-color:#8b84ff;background:#f2f1ff}
-.answer.correct{background:#dff8e8;border-color:#42b883}.answer.wrong{background:#ffe2e2;border-color:#ff6b6b}
+.answer.correct{background:#dff8e8;border-color:#42b883;color:#000000}
+.answer.wrong{background:#ffe2e2;border-color:#ff6b6b;color:#000000}
 .answer:disabled{cursor:default}
 #feedback{min-height:30px;margin:18px 0;font-weight:800;font-size:18px}
 button{border:0;border-radius:16px;padding:14px 24px;font-size:17px;font-weight:800;background:#6c63ff;color:white;cursor:pointer}
@@ -44,7 +45,7 @@ button:hover{filter:brightness(1.08)}
     <div id="startScreen">
       <div class="robot">🤖</div>
       <h1>Siap Menjadi Robot Pintar?</h1>
-      <p>Soal dan pilihan jawaban diambil secara dinamis dari <b>soal.json</b>.</p>
+      <p>Jawab pertanyaan seru seputar dunia Koding & AI!</p>
       <p><b>Setiap permainan akan mengacak soal dan posisi jawaban!</b></p>
       <button onclick="startGame()">🚀 Mulai Petualangan</button>
       <div id="loadError"></div>
@@ -72,7 +73,66 @@ button:hover{filter:brightness(1.08)}
 </div>
 
 <script>
-let allQuestions=[], gameQuestions=[], current=0, score=0, lives=3, answered=false;
+// Format JSON disederhanakan: `a` untuk daftar opsi, `c` untuk huruf kunci jawaban
+const embeddedQuestions = [
+  {
+    "cat": "Algoritma",
+    "q": "Apa yang dimaksud dengan Algoritma?",
+    "a": [
+      "Langkah-langkah berurutan untuk menyelesaikan masalah",
+      "Komponen fisik komputer",
+      "Bahasa pemograman tingkat tinggi",
+      "Gambar animasi pada game"
+    ],
+    "c": "A"
+  },
+  {
+    "cat": "Input-Proses-Output",
+    "q": "Saat kamu mengetik huruf di keyboard, itu termasuk tahap apa?",
+    "a": [
+      "Input",
+      "Proses",
+      "Output",
+      "Storage"
+    ],
+    "c": "A"
+  },
+  {
+    "cat": "Input-Proses-Output",
+    "q": "Hasil cetakan gambar dari printer disebut sebagai...",
+    "a": [
+      "Input",
+      "Proses",
+      "Output",
+      "Algoritma"
+    ],
+    "c": "C"
+  },
+  {
+    "cat": "Kecerdasan Artifisial",
+    "q": "Apa singkatan dari AI?",
+    "a": [
+      "Artificial Intelligence",
+      "Automatic Internet",
+      "Apple iPhone",
+      "Application Integration"
+    ],
+    "c": "A"
+  },
+  {
+    "cat": "Coding",
+    "q": "Perintah berulang dalam koding dinamakan...",
+    "a": [
+      "Variable",
+      "Looping (Perulangan)",
+      "Condition",
+      "Bug"
+    ],
+    "c": "B"
+  }
+];
+
+let gameQuestions=[], current=0, score=0, lives=3, answered=false;
 
 function shuffle(arr){
   const a=[...arr];
@@ -80,25 +140,10 @@ function shuffle(arr){
   return a;
 }
 
-async function loadQuestions(){
-  try{
-    const response=await fetch("soal.json");
-    if(!response.ok) throw new Error("File soal.json tidak ditemukan.");
-    const data=await response.json();
-    allQuestions=data.soal || [];
-    if(!allQuestions.length) throw new Error("Data soal kosong.");
-  }catch(error){
-    document.getElementById("loadError").innerHTML=
-      '<div class="error">⚠️ '+error.message+'<br><small>Jalankan melalui Live Server/local server, bukan langsung dengan file://.</small></div>';
-  }
-}
+function startGame(){
+  if(!embeddedQuestions.length) return;
 
-async function startGame(){
-  if(!allQuestions.length) await loadQuestions();
-  if(!allQuestions.length) return;
-
-  // Acak soal setiap permainan.
-  gameQuestions=shuffle(allQuestions);
+  gameQuestions=shuffle(embeddedQuestions);
   current=0;score=0;lives=3;
   document.getElementById("score").textContent=score;
   document.getElementById("lives").textContent=lives;
@@ -118,30 +163,35 @@ function showQuestion(){
   document.getElementById("feedback").textContent="";
   document.getElementById("nextBtn").classList.add("hidden");
 
-  // Acak pilihan jawaban, tetapi jawaban benar tetap terlacak melalui teks.
+  // Petakan teks jawaban ke objek agar dapat dilacak setelah diacak
+  const originalIndex = {"A": 0, "B": 1, "C": 2, "D": 3};
+  const targetIndex = originalIndex[q.c.toUpperCase()];
+  const correctAnswerText = q.a[targetIndex];
+
   const shuffledAnswers=shuffle(q.a);
   const box=document.getElementById("answers"); box.innerHTML="";
-  shuffledAnswers.forEach((ans,i)=>{
+  
+  shuffledAnswers.forEach((ansText, i)=>{
     const b=document.createElement("button");
     b.className="answer";
-    b.textContent=String.fromCharCode(65+i)+". "+ans;
-    b.onclick=()=>checkAnswer(ans,b);
+    b.textContent=String.fromCharCode(65+i)+". "+ansText;
+    b.dataset.text=ansText;
+    b.onclick=()=>checkAnswer(ansText, correctAnswerText, b);
     box.appendChild(b);
   });
 }
 
-function checkAnswer(selected,button){
+function checkAnswer(selectedText, correctAnswerText, button){
   if(answered)return;
   answered=true;
-  const q=gameQuestions[current];
   document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
 
-  if(selected===q.c){
+  if(selectedText===correctAnswerText){
     score+=10; button.classList.add("correct");
     document.getElementById("feedback").textContent="🎉 Benar! Kamu hebat!";
   }else{
     lives--; button.classList.add("wrong");
-    [...document.querySelectorAll(".answer")].find(b=>b.textContent.slice(3)===q.c)?.classList.add("correct");
+    [...document.querySelectorAll(".answer")].find(b=>b.dataset.text===correctAnswerText)?.classList.add("correct");
     document.getElementById("feedback").textContent="💡 Belum tepat. Jawaban yang benar sudah ditandai.";
   }
   document.getElementById("score").textContent=score;
@@ -169,8 +219,6 @@ function finishGame(){
   document.getElementById("resultText").textContent=text;
   document.getElementById("tip").textContent=tip;
 }
-
-loadQuestions();
 </script>
 </body>
 </html>
