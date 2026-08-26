@@ -28,11 +28,13 @@
       color: var(--secondary-color);
       text-shadow: 2px 2px 0px #fff;
       margin-bottom: 5px;
+      text-align: center;
     }
 
     p.subtitle {
-      font-size: 1.1rem;
+      font-size: 1rem;
       margin-top: 0;
+      text-align: center;
     }
 
     .container {
@@ -43,20 +45,25 @@
       max-width: 600px;
       width: 100%;
       border: 4px solid var(--primary-color);
+      box-sizing: border-box;
     }
 
     .dropzone {
-      min-height: 120px;
-      background-color: #f1f5f9;
-      border: 3px dashed #cbd5e1;
+      min-height: 140px;
+      background-color: #e2e8f0;
+      border: 3px dashed #94a3b8;
       border-radius: 15px;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 20px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: flex-start;
+      flex-direction: column;
+      gap: 8px;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .dropzone.drag-over {
+      background-color: #cbd5e1;
+      border-color: var(--secondary-color);
     }
 
     .step-list {
@@ -64,6 +71,7 @@
       flex-direction: column;
       gap: 10px;
       margin-bottom: 20px;
+      min-height: 50px;
     }
 
     .step-item {
@@ -72,23 +80,27 @@
       font-weight: bold;
       padding: 12px 18px;
       border-radius: 12px;
-      cursor: pointer;
+      cursor: grab;
       user-select: none;
       box-shadow: 0 4px 0px var(--secondary-color);
-      transition: transform 0.1s, background-color 0.2s;
       display: flex;
       align-items: center;
       gap: 10px;
+      transition: transform 0.1s, opacity 0.2s;
     }
 
     .step-item:active {
-      transform: translateY(4px);
-      box-shadow: none;
+      cursor: grabbing;
     }
 
-    .step-item.selected {
-      background-color: #94d2bd;
-      box-shadow: 0 4px 0px #0a9396;
+    .step-item.dragging {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+
+    .step-item .handle {
+      font-size: 1.2rem;
+      color: #713f12;
     }
 
     .buttons {
@@ -105,7 +117,6 @@
       border-radius: 12px;
       cursor: pointer;
       color: white;
-      transition: background-color 0.2s;
     }
 
     .btn-run {
@@ -139,32 +150,39 @@
       color: #721c24;
       border: 2px solid #f5c6cb;
     }
+
+    .placeholder-text {
+      color: #64748b;
+      text-align: center;
+      margin: auto;
+      pointer-events: none;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
 
   <h1>🍳 Petualangan Telur Dadar!</h1>
-  <p class="subtitle">Susun langkah (algoritma) dengan urutan yang benar untuk memasak telur dadar lezat!</p>
+  <p class="subtitle">Geser & susun blok langkah di bawah ke dalam kotak algoritma!</p>
 
   <div class="container">
     <h3>Urutan Algoritma Mu:</h3>
-    <div id="dropzone" class="dropzone">
-      <small style="color: #94a3b8; width: 100%; text-align: center;">Klik langkah-langkah di bawah sesuai urutan yang benar!</small>
+    <div id="dropzone" class="dropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <div id="placeholder" class="placeholder-text">Tarik dan lepaskan langkah-langkah ke sini!</div>
     </div>
 
     <h3>Pilihan Langkah:</h3>
-    <div id="stepContainer" class="step-list"></div>
+    <div id="stepContainer" class="step-list" ondragover="handleDragOver(event)" ondrop="handleDropToPool(event)"></div>
 
     <div class="buttons">
       <button class="btn-run" onclick="checkAlgorithm()">▶️ Jalankan Algoritma</button>
-      <button class="btn-reset" onclick="resetGame()">🔄 Reset</button>
+      <button class="btn-reset" onclick="resetGame()">🔄 Acak Ulang</button>
     </div>
 
     <div id="result"></div>
   </div>
 
   <script>
-    // Data Langkah-langkah (Acak)
     const masterSteps = [
       { id: 1, text: "🥚 Pecahkan telur ke dalam mangkuk", order: 1 },
       { id: 2, text: "🧂 Tambahkan sedikit garam & bumbu", order: 2 },
@@ -174,94 +192,146 @@
       { id: 6, text: "🍽️ Angkat dan sajikan di atas piring", order: 6 }
     ];
 
-    let currentSequence = [];
+    let draggedElement = null;
 
-    // Mengacak urutan awal
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
     }
 
-    // Inisialisasi Tampilan
     function initGame() {
       const stepContainer = document.getElementById("stepContainer");
-      stepContainer.innerHTML = "";
-      
-      const shuffled = shuffle([...masterSteps]);
-      
-      shuffled.forEach(step => {
-        const div = document.createElement("div");
-        div.className = "step-item";
-        div.innerText = step.text;
-        div.onclick = () => selectStep(step, div);
-        stepContainer.appendChild(div);
-      });
-    }
-
-    // Memilih Langkah
-    function selectStep(step, element) {
-      if (element.classList.contains("selected")) return;
-
-      element.classList.add("selected");
-      currentSequence.push(step);
-      
-      renderDropzone();
-    }
-
-    // Memperbarui Area Urutan Algoritma
-    function renderDropzone() {
       const dropzone = document.getElementById("dropzone");
-      dropzone.innerHTML = "";
+      
+      stepContainer.innerHTML = "";
+      dropzone.innerHTML = '<div id="placeholder" class="placeholder-text">Tarik dan lepaskan langkah-langkah ke sini!</div>';
+      document.getElementById("result").style.display = "none";
 
-      if (currentSequence.length === 0) {
-        dropzone.innerHTML = '<small style="color: #94a3b8; width: 100%; text-align: center;">Klik langkah-langkah di bawah sesuai urutan yang benar!</small>';
-        return;
-      }
+      const shuffled = shuffle([...masterSteps]);
 
-      currentSequence.forEach((step, index) => {
-        const item = document.createElement("div");
-        item.style.cssText = "background: #023047; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem;";
-        item.innerText = `${index + 1}. ${step.text}`;
-        dropzone.appendChild(item);
+      shuffled.forEach(step => {
+        const item = createStepElement(step);
+        stepContainer.appendChild(item);
       });
     }
 
-    // Memeriksa Kebenaran Algoritma (Computational Thinking Output)
+    function createStepElement(step) {
+      const div = document.createElement("div");
+      div.className = "step-item";
+      div.draggable = true;
+      div.dataset.id = step.id;
+      div.dataset.order = step.order;
+      div.innerHTML = `<span class="handle">☰</span> <span>${step.text}</span>`;
+
+      div.addEventListener("dragstart", (e) => {
+        draggedElement = div;
+        div.classList.add("dragging");
+        e.dataTransfer.setData("text/plain", step.id);
+      });
+
+      div.addEventListener("dragend", () => {
+        div.classList.remove("dragging");
+        draggedElement = null;
+        updatePlaceholder();
+      });
+
+      return div;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      const container = e.currentTarget;
+      container.classList.add("drag-over");
+
+      const afterElement = getDragAfterElement(container, e.clientY);
+      if (draggedElement) {
+        if (afterElement == null) {
+          container.appendChild(draggedElement);
+        } else {
+          container.insertBefore(draggedElement, afterElement);
+        }
+      }
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove("drag-over");
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove("drag-over");
+      updatePlaceholder();
+    }
+
+    function handleDropToPool(e) {
+      e.preventDefault();
+      const stepContainer = document.getElementById("stepContainer");
+      if (draggedElement) {
+        stepContainer.appendChild(draggedElement);
+      }
+      updatePlaceholder();
+    }
+
+    // Menentukan posisi berdasarkan pergerakan kursor (untuk re-ordering halus)
+    function getDragAfterElement(container, y) {
+      const draggableElements = [...container.querySelectorAll('.step-item:not(.dragging)')];
+
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function updatePlaceholder() {
+      const dropzone = document.getElementById("dropzone");
+      const placeholder = document.getElementById("placeholder");
+      const items = dropzone.querySelectorAll(".step-item");
+
+      if (items.length > 0 && placeholder) {
+        placeholder.style.display = "none";
+      } else if (items.length === 0 && placeholder) {
+        placeholder.style.display = "block";
+      }
+    }
+
     function checkAlgorithm() {
+      const dropzone = document.getElementById("dropzone");
       const resultDiv = document.getElementById("result");
+      const currentItems = [...dropzone.querySelectorAll(".step-item")];
+
       resultDiv.style.display = "block";
 
-      if (currentSequence.length < masterSteps.length) {
+      if (currentItems.length < masterSteps.length) {
         resultDiv.className = "error";
-        resultDiv.innerHTML = "⚠️ Algoritma belum lengkap! Masukkan semua langkah ya.";
+        resultDiv.innerHTML = "⚠️ Algoritma belum lengkap! Masukkan semua 6 langkah ke kotak atas.";
         return;
       }
 
       let isCorrect = true;
-      for (let i = 0; i < currentSequence.length; i++) {
-        if (currentSequence[i].order !== i + 1) {
+      currentItems.forEach((item, index) => {
+        const correctOrder = parseInt(item.dataset.order);
+        if (correctOrder !== index + 1) {
           isCorrect = false;
-          break;
         }
-      }
+      });
 
       if (isCorrect) {
         resultDiv.className = "success";
         resultDiv.innerHTML = "🎉 Hore! Algoritma sempurna! Telur dadar siap disantap. Kamu hebat! 😋";
       } else {
         resultDiv.className = "error";
-        resultDiv.innerHTML = "❌ Waduh, ada bug dalam algoritma! Urutannya ada yang tertukar. Yuk coba lagi!";
+        resultDiv.innerHTML = "❌ Waduh, ada bug dalam algoritma! Urutannya ada yang tertukar. Geser dan perbaiki urutannya!";
       }
     }
 
-    // Reset Game
     function resetGame() {
-      currentSequence = [];
-      document.getElementById("result").style.display = "none";
-      renderDropzone();
       initGame();
     }
 
-    // Jalankan pertama kali
     initGame();
   </script>
 </body>
