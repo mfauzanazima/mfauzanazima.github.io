@@ -106,7 +106,7 @@
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 30px;
     }
 
@@ -131,6 +131,7 @@
 
     .card-1 { border-color: #ffe66d; }
     .card-2 { border-color: #4ecdc4; }
+    .card-3 { border-color: #a29bfe; }
 
     .card-icon {
       font-size: 3.5rem;
@@ -151,6 +152,7 @@
 
     .card-1 h3 { color: #ff9f43; }
     .card-2 h3 { color: #10ac84; }
+    .card-3 h3 { color: #6c5ce7; }
 
     .card p {
       color: #57606f;
@@ -208,6 +210,14 @@
       background-color: #01a3a4;
     }
 
+    .btn-card-3 {
+      background-color: #6c5ce7;
+      box-shadow: 0 5px 0 #5f27cd;
+    }
+    .btn-card-3:hover {
+      background-color: #5f27cd;
+    }
+
     /* Information Section for Teachers/Parents */
     .info-section {
       background-color: #ffffff;
@@ -255,12 +265,12 @@
   <header>
     <span class="badge">🎮 Game Edukasi Anak SD</span>
     <h1>Petualangan Koding Cilik! 🧩</h1>
-    <p>Belajar berpikir kritis, logika pemograman, dan pemecahan masalah dengan cara yang seru dan menyenangkan!</p>
+    <p>Belajar berpikir kritis, logika pemrograman, dan pemecahan masalah dengan cara yang seru dan menyenangkan!</p>
   </header>
 
   <!-- Products Section -->
   <main class="container">
-    <h2 class="section-title">Pilih Game Yang Ingin Kamu Mainkan 🍳🗺️</h2>
+    <h2 class="section-title">Pilih Game Yang Ingin Kamu Mainkan 🍳🗺️♻️</h2>
 
     <div class="product-grid">
       
@@ -294,12 +304,27 @@
         <a href="https://mfauzanazima.github.io/gamecoding/petualangancoding.html" target="_blank" class="btn btn-card-2">🚀 Mulai Petualangan</a>
       </div>
 
+      <!-- Card Game 3 -->
+      <div class="card card-3">
+        <div>
+          <div class="card-icon">♻️</div>
+          <h3>Detektif Pemilah Sampah</h3>
+          <p>Uji kemampuan pengenalan pola dan klasifikasi dengan memilah sampah ke kategori yang benar!</p>
+          <ul class="features">
+            <li>Pengenalan Pola & Abstraksi</li>
+            <li>Kategori Organik, Anorganik, & B3</li>
+            <li>Sistem skor arcade interaktif</li>
+          </ul>
+        </div>
+        <a href="https://mfauzanazima.github.io/gamecoding/detektifsampah.html" target="_blank" class="btn btn-card-3">🔍 Jadi Detektif</a>
+      </div>
+
     </div>
 
     <!-- Extra Info for Teachers / Parents -->
     <div class="info-section">
       <h3>💡 Apa itu Berpikir Komputasional (Computational Thinking)?</h3>
-      <p>Melalui game interaktif ini, murid-murid belajar memecahkan masalah besar menjadi langkah-langkah kecil (Dekomposisi), menemukan pola yang sama, serta menyusun perintah yang teratur tanpa harus menghafal kode pemograman yang rumit.</p>
+      <p>Melalui game interaktif ini, murid-murid belajar memecahkan masalah besar menjadi langkah-langkah kecil (Dekomposisi), menemukan pola yang sama, serta menyusun perintah yang teratur tanpa harus menghafal kode pemrograman yang rumit.</p>
     </div>
   </main>
 
