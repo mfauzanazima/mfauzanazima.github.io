@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Algoritma Telur Dadar 🍳</title>
+  <style>
+    :root {
+      --primary-color: #ffb703;
+      --secondary-color: #fb8500;
+      --bg-color: #fefae0;
+      --card-bg: #ffffff;
+      --text-color: #023047;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: var(--secondary-color);
+      text-shadow: 2px 2px 0px #fff;
+      margin-bottom: 5px;
+    }
+
+    p.subtitle {
+      font-size: 1.1rem;
+      margin-top: 0;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      border: 4px solid var(--primary-color);
+    }
+
+    .dropzone {
+      min-height: 120px;
+      background-color: #f1f5f9;
+      border: 3px dashed #cbd5e1;
+      border-radius: 15px;
+      padding: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .step-item {
+      background-color: var(--primary-color);
+      color: #000;
+      font-weight: bold;
+      padding: 12px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 0px var(--secondary-color);
+      transition: transform 0.1s, background-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-item:active {
+      transform: translateY(4px);
+      box-shadow: none;
+    }
+
+    .step-item.selected {
+      background-color: #94d2bd;
+      box-shadow: 0 4px 0px #0a9396;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.2s;
+    }
+
+    .btn-run {
+      background-color: #2a9d8f;
+      box-shadow: 0 4px 0px #264653;
+    }
+
+    .btn-reset {
+      background-color: #e76f51;
+      box-shadow: 0 4px 0px #9b2226;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: none;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 2px solid #c3e6cb;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍳 Petualangan Telur Dadar!</h1>
+  <p class="subtitle">Susun langkah (algoritma) dengan urutan yang benar untuk memasak telur dadar lezat!</p>
+
+  <div class="container">
+    <h3>Urutan Algoritma Mu:</h3>
+    <div id="dropzone" class="dropzone">
+      <small style="color: #94a3b8; width: 100%; text-align: center;">Klik langkah-langkah di bawah sesuai urutan yang benar!</small>
+    </div>
+
+    <h3>Pilihan Langkah:</h3>
+    <div id="stepContainer" class="step-list"></div>
+
+    <div class="buttons">
+      <button class="btn-run" onclick="checkAlgorithm()">▶️ Jalankan Algoritma</button>
+      <button class="btn-reset" onclick="resetGame()">🔄 Reset</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // Data Langkah-langkah (Acak)
+    const masterSteps = [
+      { id: 1, text: "🥚 Pecahkan telur ke dalam mangkuk", order: 1 },
+      { id: 2, text: "🧂 Tambahkan sedikit garam & bumbu", order: 2 },
+      { id: 3, text: "🥣 Kocok telur hingga tercampur rata", order: 3 },
+      { id: 4, text: "🔥 Panaskan sedikit minyak di wajan", order: 4 },
+      { id: 5, text: "🍳 Tuang adonan telur ke wajan panas", order: 5 },
+      { id: 6, text: "🍽️ Angkat dan sajikan di atas piring", order: 6 }
+    ];
+
+    let currentSequence = [];
+
+    // Mengacak urutan awal
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    // Inisialisasi Tampilan
+    function initGame() {
+      const stepContainer = document.getElementById("stepContainer");
+      stepContainer.innerHTML = "";
+      
+      const shuffled = shuffle([...masterSteps]);
+      
+      shuffled.forEach(step => {
+        const div = document.createElement("div");
+        div.className = "step-item";
+        div.innerText = step.text;
+        div.onclick = () => selectStep(step, div);
+        stepContainer.appendChild(div);
+      });
+    }
+
+    // Memilih Langkah
+    function selectStep(step, element) {
+      if (element.classList.contains("selected")) return;
+
+      element.classList.add("selected");
+      currentSequence.push(step);
+      
+      renderDropzone();
+    }
+
+    // Memperbarui Area Urutan Algoritma
+    function renderDropzone() {
+      const dropzone = document.getElementById("dropzone");
+      dropzone.innerHTML = "";
+
+      if (currentSequence.length === 0) {
+        dropzone.innerHTML = '<small style="color: #94a3b8; width: 100%; text-align: center;">Klik langkah-langkah di bawah sesuai urutan yang benar!</small>';
+        return;
+      }
+
+      currentSequence.forEach((step, index) => {
+        const item = document.createElement("div");
+        item.style.cssText = "background: #023047; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.9rem;";
+        item.innerText = `${index + 1}. ${step.text}`;
+        dropzone.appendChild(item);
+      });
+    }
+
+    // Memeriksa Kebenaran Algoritma (Computational Thinking Output)
+    function checkAlgorithm() {
+      const resultDiv = document.getElementById("result");
+      resultDiv.style.display = "block";
+
+      if (currentSequence.length < masterSteps.length) {
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "⚠️ Algoritma belum lengkap! Masukkan semua langkah ya.";
+        return;
+      }
+
+      let isCorrect = true;
+      for (let i = 0; i < currentSequence.length; i++) {
+        if (currentSequence[i].order !== i + 1) {
+          isCorrect = false;
+          break;
+        }
+      }
+
+      if (isCorrect) {
+        resultDiv.className = "success";
+        resultDiv.innerHTML = "🎉 Hore! Algoritma sempurna! Telur dadar siap disantap. Kamu hebat! 😋";
+      } else {
+        resultDiv.className = "error";
+        resultDiv.innerHTML = "❌ Waduh, ada bug dalam algoritma! Urutannya ada yang tertukar. Yuk coba lagi!";
+      }
+    }
+
+    // Reset Game
+    function resetGame() {
+      currentSequence = [];
+      document.getElementById("result").style.display = "none";
+      renderDropzone();
+      initGame();
+    }
+
+    // Jalankan pertama kali
+    initGame();
+  </script>
+</body>
+</html>
