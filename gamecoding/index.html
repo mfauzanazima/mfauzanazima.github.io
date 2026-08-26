@@ -73,62 +73,97 @@ button:hover{filter:brightness(1.08)}
 </div>
 
 <script>
-// Format JSON disederhanakan: `a` untuk daftar opsi, `c` untuk huruf kunci jawaban
+// Data soal lengkap hasil konversi ke format kunci jawaban singkat (A/B/C/D)
 const embeddedQuestions = [
   {
+    "cat": "Input – Proses – Output",
+    "q": "Saat kita memasukkan nama ke komputer, kegiatan tersebut disebut...",
+    "a": ["Input", "Proses", "Output", "Algoritma"],
+    "c": "A"
+  },
+  {
+    "cat": "Input – Proses – Output",
+    "q": "Komputer menghitung 5 + 3. Kegiatan menghitung tersebut termasuk...",
+    "a": ["Input", "Proses", "Output", "Keyboard"],
+    "c": "B"
+  },
+  {
+    "cat": "Input – Proses – Output",
+    "q": "Hasil perhitungan 5 + 3 = 8 yang tampil di layar disebut...",
+    "a": ["Input", "Proses", "Output", "Kode"],
+    "c": "C"
+  },
+  {
     "cat": "Algoritma",
-    "q": "Apa yang dimaksud dengan Algoritma?",
-    "a": [
-      "Langkah-langkah berurutan untuk menyelesaikan masalah",
-      "Komponen fisik komputer",
-      "Bahasa pemograman tingkat tinggi",
-      "Gambar animasi pada game"
-    ],
+    "q": "Apa yang dimaksud dengan algoritma?",
+    "a": ["Gambar komputer", "Langkah-langkah untuk menyelesaikan masalah", "Nama robot", "Jenis permainan"],
+    "c": "B"
+  },
+  {
+    "cat": "Algoritma",
+    "q": "Urutan yang paling tepat saat membuat teh adalah...",
+    "a": ["Minum → seduh → ambil gelas", "Ambil gelas → masukkan teh → tuang air → minum", "Buang teh → minum → tuang air", "Minum → masukkan teh → ambil gelas"],
+    "c": "B"
+  },
+  {
+    "cat": "Koding",
+    "q": "Koding adalah kegiatan untuk...",
+    "a": ["Memberi komputer instruksi", "Menggambar di kertas", "Mematikan listrik", "Menghafal semua angka"],
     "c": "A"
   },
   {
-    "cat": "Input-Proses-Output",
-    "q": "Saat kamu mengetik huruf di keyboard, itu termasuk tahap apa?",
-    "a": [
-      "Input",
-      "Proses",
-      "Output",
-      "Storage"
-    ],
-    "c": "A"
-  },
-  {
-    "cat": "Input-Proses-Output",
-    "q": "Hasil cetakan gambar dari printer disebut sebagai...",
-    "a": [
-      "Input",
-      "Proses",
-      "Output",
-      "Algoritma"
-    ],
+    "cat": "Koding",
+    "q": "Jika robot diperintah 'maju 3 langkah', robot harus...",
+    "a": ["Diam", "Mundur 3 langkah", "Maju 3 langkah", "Berputar 3 kali"],
     "c": "C"
   },
   {
     "cat": "Kecerdasan Artifisial",
-    "q": "Apa singkatan dari AI?",
-    "a": [
-      "Artificial Intelligence",
-      "Automatic Internet",
-      "Apple iPhone",
-      "Application Integration"
-    ],
+    "q": "Kecerdasan Artifisial (AI) adalah teknologi yang membuat komputer dapat...",
+    "a": ["Berpikir dan belajar dari data dalam tugas tertentu", "Menjadi manusia sungguhan", "Makan makanan", "Tidur seperti manusia"],
     "c": "A"
   },
   {
-    "cat": "Coding",
-    "q": "Perintah berulang dalam koding dinamakan...",
-    "a": [
-      "Variable",
-      "Looping (Perulangan)",
-      "Condition",
-      "Bug"
-    ],
-    "c": "B"
+    "cat": "Kecerdasan Artifisial",
+    "q": "Contoh AI yang dapat mengenali wajah adalah...",
+    "a": ["Kamera dengan pengenalan wajah", "Penggaris", "Pensil", "Buku tulis"],
+    "c": "A"
+  },
+  {
+    "cat": "Kecerdasan Artifisial",
+    "q": "Mengapa AI perlu diberi data?",
+    "a": ["Agar AI dapat belajar mengenali pola", "Agar komputer menjadi lebih berat", "Agar layar menjadi besar", "Agar baterai cepat habis"],
+    "c": "A"
+  },
+  {
+    "cat": "Koding",
+    "q": "Perintah yang dilakukan berulang kali dalam program disebut...",
+    "a": ["Perulangan", "Input", "Output", "Variabel"],
+    "c": "A"
+  },
+  {
+    "cat": "Koding",
+    "q": "Jika lampu menyala ketika tombol ditekan, konsep 'jika... maka...' disebut...",
+    "a": ["Percabangan", "Perulangan", "Input saja", "Output saja"],
+    "c": "A"
+  },
+  {
+    "cat": "Algoritma",
+    "q": "Sebelum membuat program, sebaiknya kita...",
+    "a": ["Menyusun langkah penyelesaian masalah", "Langsung menekan semua tombol", "Menghapus komputer", "Mematikan layar"],
+    "c": "A"
+  },
+  {
+    "cat": "Kecerdasan Artifisial",
+    "q": "Aplikasi yang dapat memberikan rekomendasi video berdasarkan tontonan kita merupakan contoh...",
+    "a": ["AI", "Kalkulator biasa", "Printer", "Keyboard"],
+    "c": "A"
+  },
+  {
+    "cat": "Kecerdasan Artifisial",
+    "q": "Apakah AI selalu memberikan jawaban yang benar?",
+    "a": ["Tidak, hasil AI tetap perlu diperiksa manusia", "Ya, AI selalu benar", "AI tidak pernah memberikan jawaban", "Hanya benar saat malam"],
+    "c": "A"
   }
 ];
 
@@ -163,7 +198,7 @@ function showQuestion(){
   document.getElementById("feedback").textContent="";
   document.getElementById("nextBtn").classList.add("hidden");
 
-  // Petakan teks jawaban ke objek agar dapat dilacak setelah diacak
+  // Melacak jawaban yang benar berdasarkan indeks huruf kunci (A=0, B=1, C=2, D=3)
   const originalIndex = {"A": 0, "B": 1, "C": 2, "D": 3};
   const targetIndex = originalIndex[q.c.toUpperCase()];
   const correctAnswerText = q.a[targetIndex];
