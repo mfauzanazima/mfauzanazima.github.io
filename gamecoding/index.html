@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Koding & AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#dff6ff,#f7e8ff);min-height:100vh;color:#24304a}
+.game{max-width:900px;margin:auto;padding:20px}
+.header{background:white;border-radius:24px;padding:18px 22px;box-shadow:0 8px 25px rgba(40,50,100,.12);display:flex;justify-content:space-between;align-items:center;gap:15px}
+.title{font-size:28px;font-weight:800}.subtitle{font-size:14px;color:#697386;margin-top:4px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.badge{background:#eef3ff;border-radius:14px;padding:10px 14px;font-weight:700}
+#gameCard{margin-top:18px;background:white;border-radius:28px;padding:28px;box-shadow:0 10px 30px rgba(40,50,100,.13);text-align:center}
+.robot{font-size:80px;animation:float 2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.progress{height:12px;background:#edf0f7;border-radius:20px;overflow:hidden;margin:18px 0}
+#bar{height:100%;width:0;background:#6c63ff;transition:.4s}
+.category{font-size:13px;font-weight:800;color:#6c63ff;text-transform:uppercase}
+.question{font-size:25px;font-weight:800;line-height:1.35;margin:14px auto 22px;max-width:700px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:auto}
+.answer{border:3px solid #e8eaf2;background:#fafbff;border-radius:18px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;transition:.2s}
+.answer:hover{transform:translateY(-2px);border-color:#8b84ff;background:#f2f1ff}
+.answer.correct{background:#dff8e8;border-color:#42b883}.answer.wrong{background:#ffe2e2;border-color:#ff6b6b}
+.answer:disabled{cursor:default}
+#feedback{min-height:30px;margin:18px 0;font-weight:800;font-size:18px}
+button{border:0;border-radius:16px;padding:14px 24px;font-size:17px;font-weight:800;background:#6c63ff;color:white;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+.hidden{display:none}.resultIcon{font-size:90px}.scoreBig{font-size:48px;font-weight:900;color:#6c63ff}
+.tip{background:#f5f6ff;border-radius:18px;padding:15px;margin:18px auto;max-width:650px;line-height:1.5}
+.footer{text-align:center;color:#697386;font-size:13px;margin:15px}
+.error{background:#fff0f0;border:2px solid #ffb3b3;padding:16px;border-radius:16px;margin-top:15px}
+@media(max-width:650px){.header{display:block;text-align:center}.stats{justify-content:center;margin-top:12px}.answers{grid-template-columns:1fr}.question{font-size:21px}.title{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="header">
+    <div><div class="title">🤖 Petualangan Koding & AI</div><div class="subtitle">Belajar sambil bermain untuk anak SD</div></div>
+    <div class="stats"><div class="badge">⭐ Skor: <span id="score">0</span></div><div class="badge">❤️ Nyawa: <span id="lives">3</span></div></div>
+  </div>
+
+  <div id="gameCard">
+    <div id="startScreen">
+      <div class="robot">🤖</div>
+      <h1>Siap Menjadi Robot Pintar?</h1>
+      <p>Soal dan pilihan jawaban diambil secara dinamis dari <b>soal.json</b>.</p>
+      <p><b>Setiap permainan akan mengacak soal dan posisi jawaban!</b></p>
+      <button onclick="startGame()">🚀 Mulai Petualangan</button>
+      <div id="loadError"></div>
+    </div>
+
+    <div id="quizScreen" class="hidden">
+      <div class="category" id="category"></div>
+      <div class="progress"><div id="bar"></div></div>
+      <div id="questionNumber"></div>
+      <div class="question" id="question"></div>
+      <div class="answers" id="answers"></div>
+      <div id="feedback"></div>
+      <button class="hidden" id="nextBtn" onclick="nextQuestion()">➡️ Lanjut</button>
+    </div>
+
+    <div id="resultScreen" class="hidden">
+      <div class="resultIcon" id="resultIcon">🏆</div>
+      <h1 id="resultTitle">Hebat!</h1>
+      <div class="scoreBig"><span id="finalScore">0</span> Poin</div>
+      <p id="resultText"></p><div class="tip" id="tip"></div>
+      <button onclick="startGame()">🔄 Main Lagi</button>
+    </div>
+  </div>
+  <div class="footer">Materi: Algoritma • Coding • Input-Proses-Output • Kecerdasan Artifisial</div>
+</div>
+
+<script>
+let allQuestions=[], gameQuestions=[], current=0, score=0, lives=3, answered=false;
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+
+async function loadQuestions(){
+  try{
+    const response=await fetch("soal.json");
+    if(!response.ok) throw new Error("File soal.json tidak ditemukan.");
+    const data=await response.json();
+    allQuestions=data.soal || [];
+    if(!allQuestions.length) throw new Error("Data soal kosong.");
+  }catch(error){
+    document.getElementById("loadError").innerHTML=
+      '<div class="error">⚠️ '+error.message+'<br><small>Jalankan melalui Live Server/local server, bukan langsung dengan file://.</small></div>';
+  }
+}
+
+async function startGame(){
+  if(!allQuestions.length) await loadQuestions();
+  if(!allQuestions.length) return;
+
+  // Acak soal setiap permainan.
+  gameQuestions=shuffle(allQuestions);
+  current=0;score=0;lives=3;
+  document.getElementById("score").textContent=score;
+  document.getElementById("lives").textContent=lives;
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  showQuestion();
+}
+
+function showQuestion(){
+  answered=false;
+  const q=gameQuestions[current];
+  document.getElementById("category").textContent=q.cat;
+  document.getElementById("questionNumber").textContent=`Pertanyaan ${current+1} dari ${gameQuestions.length}`;
+  document.getElementById("question").textContent=q.q;
+  document.getElementById("bar").style.width=(current/gameQuestions.length*100)+"%";
+  document.getElementById("feedback").textContent="";
+  document.getElementById("nextBtn").classList.add("hidden");
+
+  // Acak pilihan jawaban, tetapi jawaban benar tetap terlacak melalui teks.
+  const shuffledAnswers=shuffle(q.a);
+  const box=document.getElementById("answers"); box.innerHTML="";
+  shuffledAnswers.forEach((ans,i)=>{
+    const b=document.createElement("button");
+    b.className="answer";
+    b.textContent=String.fromCharCode(65+i)+". "+ans;
+    b.onclick=()=>checkAnswer(ans,b);
+    box.appendChild(b);
+  });
+}
+
+function checkAnswer(selected,button){
+  if(answered)return;
+  answered=true;
+  const q=gameQuestions[current];
+  document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+
+  if(selected===q.c){
+    score+=10; button.classList.add("correct");
+    document.getElementById("feedback").textContent="🎉 Benar! Kamu hebat!";
+  }else{
+    lives--; button.classList.add("wrong");
+    [...document.querySelectorAll(".answer")].find(b=>b.textContent.slice(3)===q.c)?.classList.add("correct");
+    document.getElementById("feedback").textContent="💡 Belum tepat. Jawaban yang benar sudah ditandai.";
+  }
+  document.getElementById("score").textContent=score;
+  document.getElementById("lives").textContent=lives;
+  document.getElementById("nextBtn").classList.remove("hidden");
+}
+
+function nextQuestion(){
+  if(lives<=0 || current>=gameQuestions.length-1){finishGame();return}
+  current++;showQuestion();
+}
+
+function finishGame(){
+  document.getElementById("quizScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.remove("hidden");
+  document.getElementById("finalScore").textContent=score;
+  const max=gameQuestions.length*10, pct=score/max;
+  let icon,title,text,tip;
+  if(pct>=.9){icon="🏆";title="Luar Biasa!";text="Kamu sudah menjadi Penjelajah Koding & AI yang hebat!";tip="Terus berlatih membuat algoritma sederhana. Ingat: komputer mengikuti instruksi yang kita berikan."}
+  else if(pct>=.7){icon="🌟";title="Hebat!";text="Pemahamanmu tentang Koding dan AI sudah bagus.";tip="Coba lagi untuk mendapatkan skor lebih tinggi dan kuasai konsep Input → Proses → Output."}
+  else if(pct>=.5){icon="😊";title="Bagus, Terus Berlatih!";text="Kamu sudah mulai memahami konsep dasarnya.";tip="Pelajari lagi perbedaan Input, Proses, Output, algoritma, dan AI."}
+  else{icon="🚀";title="Ayo Coba Lagi!";text="Jangan menyerah! Setiap kesalahan adalah kesempatan untuk belajar.";tip="Mulai dari memahami contoh sederhana: masukkan data → komputer mengolah → hasil ditampilkan."}
+  document.getElementById("resultIcon").textContent=icon;
+  document.getElementById("resultTitle").textContent=title;
+  document.getElementById("resultText").textContent=text;
+  document.getElementById("tip").textContent=tip;
+}
+
+loadQuestions();
+</script>
+</body>
+</html>
