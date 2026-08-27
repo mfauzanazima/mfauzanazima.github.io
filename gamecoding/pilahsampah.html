@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Detektif Pemilah Sampah</title>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+:root {
+
+    --dark: #20263a;
+
+    --yellow: #ffd84d;
+
+    --green: #62d98b;
+
+    --blue: #67b9ff;
+
+    --purple: #b78cff;
+
+    --red: #ff7777;
+
+    --white: #ffffff;
+
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        "Trebuchet MS",
+        Arial,
+        sans-serif;
+
+    color: var(--dark);
+
+    background-color: #f7f4e8;
+
+    background-image:
+
+        radial-gradient(
+            circle at 10% 10%,
+            #ffe99a 0 18px,
+            transparent 19px
+        ),
+
+        radial-gradient(
+            circle at 90% 15%,
+            #b9f0d0 0 25px,
+            transparent 26px
+        ),
+
+        radial-gradient(
+            circle at 80% 85%,
+            #c9b4ff 0 20px,
+            transparent 21px
+        );
+
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container {
+
+    width: min(1100px, 94%);
+
+    margin: auto;
+
+    padding: 25px 0 40px;
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    background: var(--yellow);
+
+    border: 4px solid var(--dark);
+
+    border-radius: 22px;
+
+    padding: 18px 25px;
+
+    box-shadow:
+        0 7px 0 var(--dark);
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.title-area {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.detective-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 38px;
+
+    background: white;
+
+    border: 4px solid var(--dark);
+
+    border-radius: 16px;
+
+    transform: rotate(-5deg);
+
+}
+
+
+h1 {
+
+    margin: 0;
+
+    font-size:
+        clamp(26px, 4vw, 42px);
+
+    line-height: 1;
+
+}
+
+
+.subtitle {
+
+    margin-top: 8px;
+
+    font-weight: bold;
+
+}
+
+
+/* =====================================================
+   HUD
+===================================================== */
+
+.hud {
+
+    display: flex;
+
+    gap: 12px;
+
+}
+
+
+.hud-box {
+
+    min-width: 120px;
+
+    padding: 10px 15px;
+
+    text-align: center;
+
+    background: white;
+
+    border: 3px solid var(--dark);
+
+    border-radius: 15px;
+
+}
+
+
+.hud-label {
+
+    display: block;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    text-transform: uppercase;
+
+}
+
+
+.hud-value {
+
+    font-size: 27px;
+
+    font-weight: bold;
+
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+.feedback {
+
+    margin: 25px 0 18px;
+
+    min-height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 14px 20px;
+
+    text-align: center;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    background: white;
+
+    border: 4px solid var(--dark);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 5px 0 var(--dark);
+
+    transition: 0.2s;
+
+}
+
+
+.feedback.correct {
+
+    background: #c8f5d9;
+
+}
+
+
+.feedback.wrong {
+
+    background: #ffd0d0;
+
+}
+
+
+.feedback.win {
+
+    background: #e2d6ff;
+
+    animation:
+        pop 0.5s ease;
+
+}
+
+
+@keyframes pop {
+
+    50% {
+
+        transform:
+            scale(1.03);
+
+    }
+
+}
+
+
+/* =====================================================
+   GAME AREA
+===================================================== */
+
+.game-area {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1.3fr;
+
+    gap: 22px;
+
+}
+
+
+/* =====================================================
+   PANEL
+===================================================== */
+
+.panel {
+
+    background: white;
+
+    border: 4px solid var(--dark);
+
+    border-radius: 22px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 6px 0 var(--dark);
+
+}
+
+
+.panel-title {
+
+    margin-top: 0;
+
+    font-size: 22px;
+
+}
+
+
+/* =====================================================
+   ITEMS
+===================================================== */
+
+.items {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 14px;
+
+}
+
+
+.trash-item {
+
+    min-height: 130px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 12px;
+
+    background: #fff8d7;
+
+    border: 3px dashed var(--dark);
+
+    border-radius: 18px;
+
+    cursor: grab;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+
+}
+
+
+.trash-item:hover {
+
+    transform:
+        translateY(-4px)
+        rotate(-1deg);
+
+}
+
+
+.trash-item:active {
+
+    cursor: grabbing;
+
+}
+
+
+.trash-item.dragging {
+
+    opacity: 0.4;
+
+    transform:
+        scale(0.95);
+
+}
+
+
+.trash-emoji {
+
+    font-size: 50px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.trash-item.done {
+
+    opacity: 0.35;
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   BINS
+===================================================== */
+
+.bins {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+
+}
+
+
+.bin {
+
+    min-height: 250px;
+
+    padding: 15px 10px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    border: 4px solid var(--dark);
+
+    border-radius: 20px;
+
+    transition: 0.2s;
+
+}
+
+
+.bin-icon {
+
+    font-size: 55px;
+
+}
+
+
+.bin h3 {
+
+    margin: 8px 0;
+
+}
+
+
+.bin p {
+
+    margin: 0;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+}
+
+
+.organik {
+
+    background: #d6f7e3;
+
+}
+
+
+.anorganik {
+
+    background: #d8efff;
+
+}
+
+
+.b3 {
+
+    background: #eadfff;
+
+}
+
+
+/* =====================================================
+   DRAG OVER
+===================================================== */
+
+.bin.drag-over {
+
+    transform:
+        translateY(-8px)
+        scale(1.04);
+
+    box-shadow:
+
+        0 0 0 5px var(--yellow),
+
+        0 8px 0 var(--dark);
+
+}
+
+
+/* =====================================================
+   ANIMATION BENAR
+===================================================== */
+
+.bin.correct-animation {
+
+    animation:
+        correctShake 0.4s ease;
+
+}
+
+
+@keyframes correctShake {
+
+    25% {
+
+        transform:
+            translateX(-5px);
+
+    }
+
+    75% {
+
+        transform:
+            translateX(5px);
+
+    }
+
+}
+
+
+/* =====================================================
+   ANIMATION SALAH
+===================================================== */
+
+.bin.wrong-animation {
+
+    animation:
+        wrongShake 0.4s ease;
+
+}
+
+
+@keyframes wrongShake {
+
+    25% {
+
+        transform:
+            translateX(-9px);
+
+    }
+
+    50% {
+
+        transform:
+            translateX(9px);
+
+    }
+
+    75% {
+
+        transform:
+            translateX(-6px);
+
+    }
+
+}
+
+
+/* =====================================================
+   BUTTON
+===================================================== */
+
+.controls {
+
+    margin-top: 20px;
+
+    text-align: center;
+
+}
+
+
+button {
+
+    padding: 13px 24px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    color: white;
+
+    background: var(--red);
+
+    border: 4px solid var(--dark);
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 0 var(--dark);
+
+    cursor: pointer;
+
+    transition: 0.15s;
+
+}
+
+
+button:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+button:active {
+
+    transform:
+        translateY(3px);
+
+    box-shadow:
+        0 2px 0 var(--dark);
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    header {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .hud {
+
+        justify-content: center;
+
+    }
+
+
+    .game-area {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .items {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .bins {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .bin {
+
+        min-height: 150px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================= -->
+
+    <header>
+
+
+        <div class="title-area">
+
+
+            <div class="detective-icon">
+
+                🕵️
+
+            </div>
+
+
+            <div>
+
+                <h1>
+                    Detektif Pemilah Sampah
+                </h1>
+
+
+                <div class="subtitle">
+
+                    Seret sampah ke tempat yang tepat!
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- HUD -->
+
+        <div class="hud">
+
+
+            <div class="hud-box">
+
+                <span class="hud-label">
+
+                    Skor
+
+                </span>
+
+
+                <span
+                    class="hud-value"
+                    id="score"
+                >
+
+                    0
+
+                </span>
+
+            </div>
+
+
+            <div class="hud-box">
+
+                <span class="hud-label">
+
+                    Target
+
+                </span>
+
+
+                <span
+                    class="hud-value"
+                    id="target"
+                >
+
+                    0/6
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+    </header>
+
+
+    <!-- =================================================
+         FEEDBACK
+    ================================================= -->
+
+    <div
+        class="feedback"
+        id="feedback"
+    >
+
+        🕵️ Ayo Detektif!
+        Pilah semua sampah dengan benar!
+
+    </div>
+
+
+    <!-- =================================================
+         GAME AREA
+    ================================================= -->
+
+    <div class="game-area">
+
+
+        <!-- =================================================
+             SAMPAH
+        ================================================= -->
+
+        <div class="panel">
+
+
+            <h2 class="panel-title">
+
+                🗑️ Sampah yang Harus Dipilah
+
+            </h2>
+
+
+            <div
+                class="items"
+                id="items"
+            ></div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             TEMPAT SAMPAH
+        ================================================= -->
+
+        <div class="panel">
+
+
+            <h2 class="panel-title">
+
+                🚮 Tempat Pemilahan
+
+            </h2>
+
+
+            <div class="bins">
+
+
+                <!-- ORGANIK -->
+
+                <div
+                    class="bin organik"
+                    data-category="organik"
+                >
+
+
+                    <div class="bin-icon">
+
+                        🍃
+
+                    </div>
+
+
+                    <h3>
+
+                        Organik
+
+                    </h3>
+
+
+                    <p>
+
+                        Daun, sisa makanan,
+                        dan bahan alami
+
+                    </p>
+
+
+                </div>
+
+
+                <!-- ANORGANIK -->
+
+                <div
+                    class="bin anorganik"
+                    data-category="anorganik"
+                >
+
+
+                    <div class="bin-icon">
+
+                        🥤
+
+                    </div>
+
+
+                    <h3>
+
+                        Anorganik
+
+                    </h3>
+
+
+                    <p>
+
+                        Plastik, kaca,
+                        kaleng, dan kertas
+
+                    </p>
+
+
+                </div>
+
+
+                <!-- B3 -->
+
+                <div
+                    class="bin b3"
+                    data-category="b3"
+                >
+
+
+                    <div class="bin-icon">
+
+                        🔋
+
+                    </div>
+
+
+                    <h3>
+
+                        B3
+
+                    </h3>
+
+
+                    <p>
+
+                        Baterai, lampu,
+                        obat, dan bahan berbahaya
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- RESET -->
+
+            <div class="controls">
+
+
+                <button
+                    id="resetButton"
+                >
+
+                    🔄 Reset Stage
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   DATA SAMPAH
+===================================================== */
+
+const allTrash = [
+
+    {
+        name: "Kulit Pisang",
+        emoji: "🍌",
+        category: "organik"
+    },
+
+    {
+        name: "Daun Kering",
+        emoji: "🍂",
+        category: "organik"
+    },
+
+    {
+        name: "Sisa Makanan",
+        emoji: "🍚",
+        category: "organik"
+    },
+
+    {
+        name: "Apel Busuk",
+        emoji: "🍎",
+        category: "organik"
+    },
+
+    {
+        name: "Botol Plastik",
+        emoji: "🧴",
+        category: "anorganik"
+    },
+
+    {
+        name: "Kaleng Minuman",
+        emoji: "🥫",
+        category: "anorganik"
+    },
+
+    {
+        name: "Kardus",
+        emoji: "📦",
+        category: "anorganik"
+    },
+
+    {
+        name: "Botol Kaca",
+        emoji: "🍾",
+        category: "anorganik"
+    },
+
+    {
+        name: "Gelas Plastik",
+        emoji: "🥤",
+        category: "anorganik"
+    },
+
+    {
+        name: "Koran Bekas",
+        emoji: "📰",
+        category: "anorganik"
+    },
+
+    {
+        name: "Baterai Bekas",
+        emoji: "🔋",
+        category: "b3"
+    },
+
+    {
+        name: "Lampu Bekas",
+        emoji: "💡",
+        category: "b3"
+    },
+
+    {
+        name: "Obat Kedaluwarsa",
+        emoji: "💊",
+        category: "b3"
+    },
+
+    {
+        name: "Cat Bekas",
+        emoji: "🎨",
+        category: "b3"
+    }
+
+];
+
+
+/* =====================================================
+   VARIABEL GAME
+===================================================== */
+
+let score = 0;
+
+let target = 0;
+
+let currentTrash = [];
+
+let audioContext = null;
+
+
+/* =====================================================
+   AUDIO CONTEXT
+===================================================== */
+
+function initAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+
+    if (
+        audioContext.state ===
+        "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+}
+
+
+/* =====================================================
+   SUARA DRAG / PICKUP
+===================================================== */
+
+function playPickupSound() {
+
+    initAudio();
+
+
+    const now =
+        audioContext.currentTime;
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type =
+        "sine";
+
+
+    oscillator.frequency.setValueAtTime(
+
+        350,
+
+        now
+
+    );
+
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+
+        600,
+
+        now + 0.1
+
+    );
+
+
+    gain.gain.setValueAtTime(
+
+        0.001,
+
+        now
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.12,
+
+        now + 0.02
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.001,
+
+        now + 0.12
+
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start(now);
+
+    oscillator.stop(
+        now + 0.12
+    );
+
+}
+
+
+/* =====================================================
+   SUARA JAWABAN BENAR
+===================================================== */
+
+function playCorrectSound() {
+
+    initAudio();
+
+
+    const now =
+        audioContext.currentTime;
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type =
+        "square";
+
+
+    oscillator.frequency.setValueAtTime(
+
+        523.25,
+
+        now
+
+    );
+
+
+    oscillator.frequency.setValueAtTime(
+
+        659.25,
+
+        now + 0.10
+
+    );
+
+
+    oscillator.frequency.setValueAtTime(
+
+        783.99,
+
+        now + 0.20
+
+    );
+
+
+    gain.gain.setValueAtTime(
+
+        0.001,
+
+        now
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.25,
+
+        now + 0.02
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.001,
+
+        now + 0.40
+
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start(now);
+
+    oscillator.stop(
+        now + 0.40
+    );
+
+}
+
+
+/* =====================================================
+   SUARA JAWABAN SALAH
+===================================================== */
+
+function playWrongSound() {
+
+    initAudio();
+
+
+    const now =
+        audioContext.currentTime;
+
+
+    const oscillator =
+        audioContext.createOscillator();
+
+
+    const gain =
+        audioContext.createGain();
+
+
+    oscillator.type =
+        "sawtooth";
+
+
+    oscillator.frequency.setValueAtTime(
+
+        180,
+
+        now
+
+    );
+
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+
+        80,
+
+        now + 0.25
+
+    );
+
+
+    gain.gain.setValueAtTime(
+
+        0.001,
+
+        now
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.20,
+
+        now + 0.02
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.001,
+
+        now + 0.30
+
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+
+    oscillator.start(now);
+
+    oscillator.stop(
+        now + 0.30
+    );
+
+}
+
+
+/* =====================================================
+   SUARA KEMENANGAN
+===================================================== */
+
+function playWinSound() {
+
+    initAudio();
+
+
+    const notes = [
+
+        523.25,
+
+        659.25,
+
+        783.99,
+
+        1046.50
+
+    ];
+
+
+    notes.forEach(
+
+        function(
+            frequency,
+            index
+        ) {
+
+
+            const now =
+
+                audioContext.currentTime +
+
+                index * 0.12;
+
+
+            const oscillator =
+
+                audioContext
+                    .createOscillator();
+
+
+            const gain =
+
+                audioContext
+                    .createGain();
+
+
+            oscillator.type =
+                "square";
+
+
+            oscillator.frequency.value =
+                frequency;
+
+
+            gain.gain.setValueAtTime(
+
+                0.001,
+
+                now
+
+            );
+
+
+            gain.gain.exponentialRampToValueAtTime(
+
+                0.25,
+
+                now + 0.02
+
+            );
+
+
+            gain.gain.exponentialRampToValueAtTime(
+
+                0.001,
+
+                now + 0.30
+
+            );
+
+
+            oscillator.connect(gain);
+
+
+            gain.connect(
+                audioContext.destination
+            );
+
+
+            oscillator.start(now);
+
+
+            oscillator.stop(
+                now + 0.30
+            );
+
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   SHUFFLE
+===================================================== */
+
+function shuffle(array) {
+
+    return [...array].sort(
+
+        () => Math.random() - 0.5
+
+    );
+
+}
+
+
+/* =====================================================
+   BUAT STAGE
+===================================================== */
+
+function createStage() {
+
+    /*
+       Ambil 6 sampah secara acak.
+    */
+
+    currentTrash =
+        shuffle(allTrash).slice(0, 6);
+
+
+    renderItems();
+
+}
+
+
+/* =====================================================
+   RENDER SAMPAH
+===================================================== */
+
+function renderItems() {
+
+    const container =
+        document.getElementById(
+            "items"
+        );
+
+
+    container.innerHTML = "";
+
+
+    currentTrash.forEach(
+
+        function(item, index) {
+
+
+            const trash =
+                document.createElement(
+                    "div"
+                );
+
+
+            trash.className =
+                "trash-item";
+
+
+            trash.draggable =
+                true;
+
+
+            trash.dataset.index =
+                index;
+
+
+            trash.dataset.category =
+                item.category;
+
+
+            trash.innerHTML = `
+
+                <div class="trash-emoji">
+
+                    ${item.emoji}
+
+                </div>
+
+                <div>
+
+                    ${item.name}
+
+                </div>
+
+            `;
+
+
+            /* =========================
+               DRAG START
+            ========================= */
+
+            trash.addEventListener(
+
+                "dragstart",
+
+                function(event) {
+
+
+                    event.dataTransfer.setData(
+
+                        "text/plain",
+
+                        index
+
+                    );
+
+
+                    event.dataTransfer.effectAllowed =
+                        "move";
+
+
+                    trash.classList.add(
+                        "dragging"
+                    );
+
+
+                    /*
+                       Suara ketika
+                       mengambil sampah.
+                    */
+
+                    playPickupSound();
+
+                }
+
+            );
+
+
+            /* =========================
+               DRAG END
+            ========================= */
+
+            trash.addEventListener(
+
+                "dragend",
+
+                function() {
+
+                    trash.classList.remove(
+                        "dragging"
+                    );
+
+                }
+
+            );
+
+
+            container.appendChild(
+                trash
+            );
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   NAMA KATEGORI
+===================================================== */
+
+function getCategoryName(
+    category
+) {
+
+
+    if (
+        category ===
+        "organik"
+    ) {
+
+        return "Organik 🍃";
+
+    }
+
+
+    if (
+        category ===
+        "anorganik"
+    ) {
+
+        return "Anorganik 🥤";
+
+    }
+
+
+    if (
+        category ===
+        "b3"
+    ) {
+
+        return "B3 🔋";
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE HUD
+===================================================== */
+
+function updateHUD() {
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        score;
+
+
+    document.getElementById(
+        "target"
+    ).textContent =
+        target + "/6";
+
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+function setFeedback(
+    message,
+    type = ""
+) {
+
+    const feedback =
+        document.getElementById(
+            "feedback"
+        );
+
+
+    feedback.textContent =
+        message;
+
+
+    feedback.className =
+        "feedback " + type;
+
+}
+
+
+/* =====================================================
+   EVENT BIN
+===================================================== */
+
+const bins =
+    document.querySelectorAll(
+        ".bin"
+    );
+
+
+bins.forEach(
+
+    function(bin) {
+
+
+        /* =========================
+           DRAG OVER
+        ========================= */
+
+        bin.addEventListener(
+
+            "dragover",
+
+            function(event) {
+
+                event.preventDefault();
+
+
+                bin.classList.add(
+                    "drag-over"
+                );
+
+            }
+
+        );
+
+
+        /* =========================
+           DRAG LEAVE
+        ========================= */
+
+        bin.addEventListener(
+
+            "dragleave",
+
+            function() {
+
+                bin.classList.remove(
+                    "drag-over"
+                );
+
+            }
+
+        );
+
+
+        /* =========================
+           DROP
+        ========================= */
+
+        bin.addEventListener(
+
+            "drop",
+
+            function(event) {
+
+
+                event.preventDefault();
+
+
+                bin.classList.remove(
+                    "drag-over"
+                );
+
+
+                const index =
+                    Number(
+
+                        event.dataTransfer
+                            .getData(
+                                "text/plain"
+                            )
+
+                    );
+
+
+                const item =
+                    currentTrash[index];
+
+
+                /*
+                   Pastikan item masih ada.
+                */
+
+                if (!item) {
+
+                    return;
+
+                }
+
+
+                const selectedBin =
+                    bin.dataset.category;
+
+
+                const trashElement =
+                    document.querySelector(
+
+                        `.trash-item[data-index="${index}"]`
+
+                    );
+
+
+                /* =================================================
+                   JAWABAN BENAR
+                ================================================= */
+
+                if (
+                    item.category ===
+                    selectedBin
+                ) {
+
+
+                    /*
+                       Suara benar.
+                    */
+
+                    playCorrectSound();
+
+
+                    /*
+                       Tambah skor.
+                    */
+
+                    score += 100;
+
+
+                    /*
+                       Tambah target.
+                    */
+
+                    target++;
+
+
+                    updateHUD();
+
+
+                    /*
+                       Feedback.
+                    */
+
+                    setFeedback(
+
+                        `🎉 Benar! ${item.name} termasuk ${getCategoryName(item.category)}. +100 Poin!`,
+
+                        "correct"
+
+                    );
+
+
+                    /*
+                       Animasi tempat sampah.
+                    */
+
+                    bin.classList.add(
+                        "correct-animation"
+                    );
+
+
+                    setTimeout(
+
+                        function() {
+
+                            bin.classList.remove(
+                                "correct-animation"
+                            );
+
+                        },
+
+                        400
+
+                    );
+
+
+                    /*
+                       Tandai selesai.
+                    */
+
+                    trashElement.classList.add(
+                        "done"
+                    );
+
+
+                    trashElement.draggable =
+                        false;
+
+
+                    /*
+                       Hapus dari layar.
+                    */
+
+                    setTimeout(
+
+                        function() {
+
+                            trashElement.remove();
+
+                        },
+
+                        300
+
+                    );
+
+
+                    /*
+                       Cek kemenangan.
+                    */
+
+                    if (
+                        target === 6
+                    ) {
+
+
+                        setTimeout(
+
+                            function() {
+
+                                finishGame();
+
+                            },
+
+                            500
+
+                        );
+
+                    }
+
+                }
+
+
+                /* =================================================
+                   JAWABAN SALAH
+                ================================================= */
+
+                else {
+
+
+                    /*
+                       Suara salah.
+                    */
+
+                    playWrongSound();
+
+
+                    /*
+                       Kurangi 20.
+                    */
+
+                    score -= 20;
+
+
+                    /*
+                       Skor minimum 0.
+                    */
+
+                    if (
+                        score < 0
+                    ) {
+
+                        score = 0;
+
+                    }
+
+
+                    updateHUD();
+
+
+                    /*
+                       Feedback.
+                    */
+
+                    setFeedback(
+
+                        `🔎 Ups! ${item.name} bukan sampah ${getCategoryName(selectedBin)}. Coba lagi! -20 Poin.`,
+
+                        "wrong"
+
+                    );
+
+
+                    /*
+                       Animasi salah.
+                    */
+
+                    bin.classList.add(
+                        "wrong-animation"
+                    );
+
+
+                    setTimeout(
+
+                        function() {
+
+                            bin.classList.remove(
+                                "wrong-animation"
+                            );
+
+                        },
+
+                        400
+
+                    );
+
+                }
+
+            }
+
+        );
+
+    }
+
+);
+
+
+/* =====================================================
+   GAME SELESAI
+===================================================== */
+
+function finishGame() {
+
+
+    /*
+       Suara kemenangan.
+    */
+
+    playWinSound();
+
+
+    /*
+       Feedback kemenangan.
+    */
+
+    setFeedback(
+
+        `🏆 LUAR BIASA, DETEKTIF! Semua sampah berhasil dipilah! Skor akhir kamu: ${score} poin! 🎉`,
+
+        "win"
+
+    );
+
+}
+
+
+/* =====================================================
+   RESET GAME
+===================================================== */
+
+function resetGame() {
+
+
+    /*
+       Reset skor.
+    */
+
+    score = 0;
+
+
+    /*
+       Reset target.
+    */
+
+    target = 0;
+
+
+    /*
+       Update HUD.
+    */
+
+    updateHUD();
+
+
+    /*
+       Buat stage baru.
+    */
+
+    createStage();
+
+
+    /*
+       Feedback.
+    */
+
+    setFeedback(
+
+        "🕵️ Stage baru dimulai! Seret 6 sampah ke tempat yang tepat!",
+
+        ""
+
+    );
+
+}
+
+
+/* =====================================================
+   TOMBOL RESET
+===================================================== */
+
+document
+    .getElementById("resetButton")
+    .addEventListener(
+        "click",
+        resetGame
+    );
+
+
+/* =====================================================
+   MULAI GAME
+===================================================== */
+
+createStage();
+
+updateHUD();
+
+</script>
+
+
+</body>
+</html>
