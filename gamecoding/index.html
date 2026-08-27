@@ -92,7 +92,7 @@
 
     /* Section Grid Products */
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 20px 20px 60px;
     }
@@ -106,8 +106,8 @@
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
     }
 
     /* Product Cards */
@@ -132,6 +132,7 @@
     .card-1 { border-color: #ffe66d; }
     .card-2 { border-color: #4ecdc4; }
     .card-3 { border-color: #a29bfe; }
+    .card-4 { border-color: #ff7675; }
 
     .card-icon {
       font-size: 3.5rem;
@@ -146,17 +147,18 @@
     }
 
     .card h3 {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       margin-bottom: 12px;
     }
 
     .card-1 h3 { color: #ff9f43; }
     .card-2 h3 { color: #10ac84; }
     .card-3 h3 { color: #6c5ce7; }
+    .card-4 h3 { color: #d63031; }
 
     .card p {
       color: #57606f;
-      font-size: 1rem;
+      font-size: 0.95rem;
       margin-bottom: 20px;
       flex-grow: 1;
     }
@@ -167,7 +169,7 @@
     }
 
     .features li {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #2f3542;
       margin-bottom: 8px;
       display: flex;
@@ -177,7 +179,7 @@
 
     .features li::before {
       content: "⭐️";
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     /* Buttons */
@@ -188,7 +190,7 @@
       border-radius: 16px;
       text-decoration: none;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: #ffffff;
       transition: all 0.2s ease;
       box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
@@ -216,6 +218,14 @@
     }
     .btn-card-3:hover {
       background-color: #5f27cd;
+    }
+
+    .btn-card-4 {
+      background-color: #ff7675;
+      box-shadow: 0 5px 0 #d63031;
+    }
+    .btn-card-4:hover {
+      background-color: #d63031;
     }
 
     /* Information Section for Teachers/Parents */
@@ -270,7 +280,7 @@
 
   <!-- Products Section -->
   <main class="container">
-    <h2 class="section-title">Pilih Game Yang Ingin Kamu Mainkan 🍳🗺️♻️</h2>
+    <h2 class="section-title">Pilih Game Yang Ingin Kamu Mainkan 🍳🗺️♻️🧩</h2>
 
     <div class="product-grid">
       
@@ -317,6 +327,21 @@
           </ul>
         </div>
         <a href="https://mfauzanazima.github.io/gamecoding/detektifsampah.html" target="_blank" class="btn btn-card-3">🔍 Jadi Detektif</a>
+      </div>
+
+      <!-- Card Game 4 (Baru) -->
+      <div class="card card-4">
+        <div>
+          <div class="card-icon">🧩</div>
+          <h3>Game Mencocokkan Pasangan</h3>
+          <p>Latih daya ingat, logika, dan kemampuan analisis dengan mencocokkan kartu dan objek yang sesuai!</p>
+          <ul class="features">
+            <li>Melatih logika & konsentrasi</li>
+            <li>Pengenalan konsep kesesuaian pola</li>
+            <li>Interaktif dan seru untuk pemula</li>
+          </ul>
+        </div>
+        <a href="https://mfauzanazima.github.io/gamecoding/mencocokan.html" target="_blank" class="btn btn-card-4">🎯 Mulai Mencocokkan</a>
       </div>
 
     </div>
